@@ -1,9 +1,8 @@
 
 from rkd.syntax import TaskAliasDeclaration as Task
-from harbor import imports as HarborImports
 from rkd_python import imports as PythonImports
 
-IMPORTS = [] + PythonImports() + HarborImports()
+IMPORTS = [] + PythonImports()
 
 TASKS = [
     Task(':release', description='Release to PyPI (snapshot when on master, release on tag)',
