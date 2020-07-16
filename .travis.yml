@@ -1,0 +1,22 @@
+language: python
+os: linux
+dist: bionic
+#if: branch = master or tag IS present
+python: 3.6
+
+# important: with limited depth the tags are not cloned properly - the PBR does not work
+git:
+   depth: false
+
+before_install:
+  - pip install -r ./requirements-dev.txt
+
+jobs:
+    allow_failures:
+        env:
+            - CAN_FAIL=true
+
+    include:
+        - stage: Release
+          python: 3.6
+          script: rkd :release
