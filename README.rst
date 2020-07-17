@@ -1,8 +1,21 @@
 Snippet Cooperative
 ===================
 
-Have you ever tried to implement a plugin repository & installing mechanism? It's not easy, and we know it.
-RKD Snippet Cooperative is a ready-to-use mechanism that works with ANY programming language, but still you need to have installed Python 3 and PIP.
+Sharing snippets, plugins, packages never was so easy. GIT-based tool similar to package manager that have repositories on GIT/Github!
+Uses popular and easy JINJA2 templating to render configuration files based on answers aksed to the user during snippet installation.
+
+**Perfect tool to:**
+
+- Share ready-to-use, customizable configuration files
+- Share docker-compose.yml definitions where you can parametrize database credentials, container names
+- Install plugins to any application, it just unpack files from repository and runs an installer script that is highly customizable
+
+.. code:: bash
+
+    export REPOSITORIES=https://github.com/riotkit-org/riotkit-harbor-snippet-cooperative
+    rkd-coop :cooperative:sync          # similar to apt update, huh?
+    rkd-coop :cooperative:install redis
+
 
 How it works?
 -------------
