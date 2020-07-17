@@ -8,7 +8,7 @@ from rkd_cooperative import CooperativeSyncTask
 from rkd_cooperative.test import BaseTestCase
 
 
-class TestCooperativeSyncTask(BaseTestCase):
+class CooperativeSyncTaskTest(BaseTestCase):
     def test_functional_syncing_repository_is_cloning_then_doing_pull_next_time(self):
         """Functional test checking if there is a git clone and git pull performed"""
 

@@ -160,7 +160,8 @@ class CooperativeInstallTask(BaseCooperativeTask):
 
             if snippet_name == name:
                 if found_path is not None:
-                    raise Exception('Ambiguous match, %s exists in %s and in %s' % (name, found_path, snippet_path))
+                    self.io().error('Ambiguous match, %s exists in %s and in %s' % (name, found_path, snippet_path))
+                    return ''
 
                 found_path = snippet_path
 

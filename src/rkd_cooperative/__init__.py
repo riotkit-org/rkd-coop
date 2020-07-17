@@ -25,6 +25,7 @@ def imports():
         TaskDeclaration(CooperativeSyncTask()),
         TaskDeclaration(CooperativeSnippetInstallTask()),
         TaskDeclaration(CooperativeInstallTask()),
+        TaskDeclaration(CooperativeSnippetWizardTask()),
         TaskDeclaration(CooperativeSyncTask()),
 
         TaskDeclaration(GetEnvTask()),

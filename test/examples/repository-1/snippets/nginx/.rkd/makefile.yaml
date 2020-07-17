@@ -1,0 +1,12 @@
+version: org.riotkit.rkd/yaml/v1
+tasks:
+    :snippet:wizard:
+        arguments:
+            "path":
+                help: "Path to the snippet"
+        steps: |
+            #!python
+            from rkd.inputoutput import Wizard
+            Wizard(this)\
+                .ask('Domain name', attribute='DOMAIN', regexp='([A-Za-z0-9_.]+)', default='localhost', to_env=True)\
+                .finish()
