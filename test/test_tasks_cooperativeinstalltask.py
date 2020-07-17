@@ -62,6 +62,6 @@ class CooperativeInstallTaskTest(BaseTestCase):
             mock_task(task=task, io=io)
 
             task.execute(mock_execution_context(task, args={'name': 'nginx'}))
-            self.assertIn('Ambiguous match, nginx exists in .rkd/cooperative/repository-1/snippets/nginx and in ' +
-                          '.rkd/cooperative/repository-copy/snippets/nginx', io.get_value())
-
+            self.assertIn('Ambiguous match, nginx exists in', io.get_value())
+            self.assertIn('.rkd/cooperative/repository-1/snippets/nginx', io.get_value())
+            self.assertIn('.rkd/cooperative/repository-copy/snippets/nginx', io.get_value())
