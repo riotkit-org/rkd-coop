@@ -10,6 +10,7 @@ git:
 
 before_install:
   - pip install -r ./requirements-dev.txt
+  - ./setup.py install
 
 jobs:
     allow_failures:
