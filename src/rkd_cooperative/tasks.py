@@ -8,7 +8,7 @@ from rkd.contract import ExecutionContext
 from rkd.exception import MissingInputException
 from rkd.inputoutput import Wizard
 from rkd.contract import TaskInterface
-from .formatting import development_formatting
+from .formatting import core_snippet_tasks_formatting
 
 HARBOR_PATH = os.path.dirname(os.path.realpath(__file__)) + '/..'
 REPOSITORIES_DIRECTORY = '.rkd/cooperative'
@@ -16,7 +16,7 @@ REPOSITORIES_DIRECTORY = '.rkd/cooperative'
 
 class BaseCooperativeTask(TaskInterface):
     def format_task_name(self, name) -> str:
-        return development_formatting(name)
+        return core_snippet_tasks_formatting(name)
 
     def get_declared_envs(self) -> Dict[str, str]:
         envs = super(BaseCooperativeTask, self).get_declared_envs()
@@ -27,11 +27,20 @@ class BaseCooperativeTask(TaskInterface):
     def get_group_name(self) -> str:
         return ':cooperative'
 
-    def get_repositories_list(self, ctx: ExecutionContext) -> list:
+    @staticmethod
+    def get_repositories_list(ctx: ExecutionContext) -> Dict[str, str]:
         try:
-            return ctx.get_arg_or_env('--repositories').split(',')
+            repos = ctx.get_arg_or_env('--repositories').split(',')
+            repos_with_branch = {}
+
+            for repo in repos:
+                parts = repo.split('@@')
+                repos_with_branch[parts[0]] = parts[1] if len(parts) >= 2 else 'master'
+
+            return repos_with_branch
+
         except MissingInputException:
-            return []
+            return {}
 
 
 class CooperativeSyncTask(BaseCooperativeTask):
@@ -46,10 +55,10 @@ class CooperativeSyncTask(BaseCooperativeTask):
     def execute(self, ctx: ExecutionContext) -> bool:
         end_result = True
 
-        for repository in self.get_repositories_list(ctx):
+        for repository, branch in self.get_repositories_list(ctx).items():
             self.io().info('Syncing repository "%s"' % repository)
 
-            if not self.sync_repository(repository):
+            if not self.sync_repository(repository, branch):
                 self.io().error('Failed to synchronize repository "%s"' % repository)
 
                 end_result = False
@@ -59,17 +68,21 @@ class CooperativeSyncTask(BaseCooperativeTask):
 
         return end_result
 
-    def sync_repository(self, git_url: str):
+    def sync_repository(self, git_url: str, branch: str):
         repository_dir = REPOSITORIES_DIRECTORY + '/' + self.extract_repository_name_from_git_url(git_url)
 
         try:
             if not os.path.isdir(repository_dir + '/'):
                 self.sh(' '.join(['mkdir', '-p', repository_dir]))
                 self.sh(' '.join(['git', 'clone', git_url, repository_dir]))
+                self.sh('cd "%s" && git config advice.detachedHead false' % repository_dir)
+                self.sh('cd "%s" && git checkout "%s"' % (repository_dir, branch))
                 return True
 
             # pull the existing repository
-            self.sh('''cd "%s" && git reset --hard HEAD && git checkout master && git pull''' % repository_dir)
+            self.sh('''cd "%s" && git reset --hard HEAD && git checkout %s && git pull origin %s''' % (
+                repository_dir, branch, branch
+            ))
 
         except subprocess.CalledProcessError as e:
             self.io().error('Error fetching a git repository: %s' % str(e))
@@ -83,6 +96,11 @@ class CooperativeSyncTask(BaseCooperativeTask):
             return urlparse(git_url).path[1:]
 
         name = git_url[5:].split(':')[1]
+        parts = name.split('/')
+
+        # support for custom GIT-SSH port (example: ssh://git@github.com:5000/riotkit-org/riotkit-do.git)
+        if parts[0].isdecimal():
+            name = '/'.join(parts[1:])
 
         if name.endswith('.git'):
             return name[0:-4]
@@ -150,7 +168,7 @@ class CooperativeInstallTask(BaseCooperativeTask):
 
     @staticmethod
     def list_snippets():
-        dirs = glob('.rkd/cooperative/**/**/files', recursive=True)
+        dirs = glob('.rkd/cooperative/**/snippets/**/files', recursive=True)
 
         return list(set(map(lambda name: os.path.dirname(name), dirs)))
 

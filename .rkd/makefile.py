@@ -1,4 +1,5 @@
 
+import os
 from rkd.syntax import TaskAliasDeclaration as Task
 from rkd_python import imports as PythonImports
 
