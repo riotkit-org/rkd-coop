@@ -1,8 +1,10 @@
-Snippet Cooperative
-===================
+Snippet Cooperative (RKD-COOP)
+==============================
 
-Sharing snippets, plugins, packages never was so easy. GIT-based tool similar to package manager that have repositories on GIT/Github!
-Uses popular and easy JINJA2 templating to render configuration files based on answers aksed to the user during snippet installation.
+.. image:: ./docs/rkd-coop-technology-stack.png
+
+Sharing snippets, plugins, packages never was so easy. :code:`rkd-coop` is a GIT-based tool similar to package manager that have repositories on GIT/Github!
+Uses popular and easy JINJA2 templating to render configuration files based on answers asked to the user during snippet installation.
 
 **Perfect tool to:**
 
