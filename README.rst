@@ -10,7 +10,7 @@ Uses popular and easy JINJA2 templating to render configuration files based on a
 
 - Share ready-to-use, customizable configuration files
 - Share docker-compose.yml definitions where you can parametrize database credentials, container names
-- Install plugins to any application, it just unpack files from repository and runs an installer script that is highly customizable
+- Install plugins to any application (example flow: ask which version, download, unpack)
 
 .. code:: bash
 

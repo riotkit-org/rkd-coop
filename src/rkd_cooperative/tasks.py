@@ -129,7 +129,7 @@ class CooperativeInstallTask(BaseCooperativeTask):
         self.io().info('Installing snippet from "%s"' % path)
 
         # mock rkd_path, so the snippet can override the tasks
-        rkd_path = os.getenv('rkd_path', '')
+        rkd_path = os.getenv('RKD_PATH', '')
         snippet_rkd_path = os.path.realpath('./' + path + '/.rkd')
 
         if snippet_rkd_path:
