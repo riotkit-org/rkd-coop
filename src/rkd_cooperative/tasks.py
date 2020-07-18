@@ -3,6 +3,7 @@ import subprocess
 from glob import glob
 from argparse import ArgumentParser
 from typing import Dict
+from typing import Tuple
 from urllib.parse import urlparse
 from rkd.contract import ExecutionContext
 from rkd.exception import MissingInputException
@@ -119,7 +120,9 @@ class CooperativeInstallTask(BaseCooperativeTask):
 
     def execute(self, ctx: ExecutionContext) -> bool:
         name = ctx.get_arg('name')
-        path = self.find_snippet_path(name)
+
+        category_name, pkg_name = self.extract_category_and_pkg_names(name)
+        path = self.find_snippet_path(pkg_name, category_name)
 
         if not path:
             self.io().error('Snippet not found in any synchronized repository. ' +
@@ -146,7 +149,15 @@ class CooperativeInstallTask(BaseCooperativeTask):
 
         return True
 
-    def find_snippet_path(self, name: str):
+    @staticmethod
+    def extract_category_and_pkg_names(name: str) -> Tuple[str, str]:
+        parts = name.split('/')
+        category_name = parts[0] if len(parts) >= 2 else ''
+        pkg_name = '/'.join(parts[1:]) if len(parts) >= 2 else name
+
+        return category_name, pkg_name
+
+    def find_snippet_path(self, name: str, category_name: str):
         """Finds a snippet path by name.
 
         Raises:
@@ -155,12 +166,14 @@ class CooperativeInstallTask(BaseCooperativeTask):
 
         found_path = None
 
-        for snippet_path in self.list_snippets():
+        for snippet_path in self.list_snippets(category_name):
             snippet_name = os.path.basename(snippet_path)
 
             if snippet_name == name:
                 if found_path is not None:
-                    self.io().error('Ambiguous match, %s exists in %s and in %s' % (name, found_path, snippet_path))
+                    self.io().error(('Ambiguous match, %s exists in %s and in %s. ' +
+                                    'Maybe try to prepend a category name if it is available?') %
+                                    (name, found_path, snippet_path))
                     return ''
 
                 found_path = snippet_path
@@ -168,8 +181,9 @@ class CooperativeInstallTask(BaseCooperativeTask):
         return found_path
 
     @staticmethod
-    def list_snippets():
-        dirs = glob('.rkd/cooperative/**/snippets/**/files', recursive=True)
+    def list_snippets(category_name: str):
+        inside_path = category_name + '/' if category_name else ''
+        dirs = glob('.rkd/cooperative/**/snippets/' + inside_path + '**/files', recursive=True)
 
         return list(set(map(lambda name: os.path.dirname(name), dirs)))
 
