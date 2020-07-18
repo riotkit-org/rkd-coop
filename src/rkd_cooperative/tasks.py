@@ -21,7 +21,7 @@ class BaseCooperativeTask(TaskInterface):
 
     def get_declared_envs(self) -> Dict[str, str]:
         envs = super(BaseCooperativeTask, self).get_declared_envs()
-        envs['REPOSITORIES'] = ''
+        envs['COOP_REPOSITORIES'] = ''
 
         return envs
 
@@ -31,7 +31,7 @@ class BaseCooperativeTask(TaskInterface):
     @staticmethod
     def get_repositories_list(ctx: ExecutionContext) -> Dict[str, str]:
         try:
-            repos = ctx.get_arg_or_env('--repositories').split(',')
+            repos = ctx.get_arg_or_env('--coop-repositories').split(',')
             repos_with_branch = {}
 
             for repo in repos:
@@ -48,7 +48,7 @@ class CooperativeSyncTask(BaseCooperativeTask):
     """Synchronize repositories"""
 
     def configure_argparse(self, parser: ArgumentParser):
-        pass
+        parser.add_argument('--coop-repositories', default='', help='List of urls to repositories, comma separated')
 
     def get_name(self) -> str:
         return ':sync'
