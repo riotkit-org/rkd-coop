@@ -133,7 +133,7 @@ class CooperativeInstallTask(BaseCooperativeTask):
         snippet_rkd_path = os.path.realpath('./' + path + '/.rkd')
 
         if snippet_rkd_path:
-            os.putenv('RKD_PATH', (snippet_rkd_path + ':' + rkd_path).strip(':'))
+            os.putenv('RKD_PATH', (rkd_path + ':' + snippet_rkd_path).strip(':'))
 
         try:
             subprocess.check_call(['rkd', ':snippet:wizard', path])
