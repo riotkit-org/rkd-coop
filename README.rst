@@ -16,7 +16,7 @@ Uses popular and easy JINJA2 templating to render configuration files based on a
 
     export REPOSITORIES=https://github.com/riotkit-org/riotkit-harbor-snippet-cooperative
     rkd-coop :cooperative:sync          # similar to apt update, huh?
-    rkd-coop :cooperative:install redis
+    rkd-coop :cooperative:install harbor/redis
 
 
 How it works?
@@ -25,21 +25,107 @@ How it works?
 The mechanism is using GIT repository as a central repository of content, there is a command to synchronize all repositories :code:`rkd-coop :cooperative:sync`.
 With :code:`rkd-coop :cooperative:install NAME` a snippet can be installed from local repository.
 
-Snippet structure - custom installation process
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Repository and snippets structure
+---------------------------------
 
-Snippets structure allows to define custom installers per snippet - by using RKD each snippet have a possibility to override tasks :code:`:snippet:wizard` and :code:`:snippet:install`.
+**Example structure**
 
-To overwrite the files copying process simply implement a task :code:`:snippet:install`
+.. code:: yaml
+
+    README.md
+
+    # main directory with snippets, can contain directories with snippets directly or additionally the categories
+    snippets/
+    snippets/web-servers/
 
 
-Snippet structure - interactive installation wizard
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    # snippet main directory, maintained by a maintainers listed in a separate file
+    snippets/web-servers/nginx
+    snippets/web-servers/nginx/MAINTAINERS.md
 
-The :code:`:snippet:wizard` task is intended to implement an interactive Wizard, it should be overridden by snippet's makefile.yaml
+    # RKD's makefile defines how to install the snippet (eg. interactive installation wizards)
+    snippets/web-servers/nginx/.rkd/makefile.yaml
+
+    # files to copy to "./" (current workspace), all *.j2 files are rendered and .j2 extensions are cut off
+    # can include subdirectories of any depth
+    snippets/web-servers/nginx/files/nginx.conf.j2
+
+Makefile - creating interactive wizards
+---------------------------------------
+
+In RKD's Makefile you can define tasks. The RKD-COOP is expecting that you could define task :code:`:snippet:wizard`,
+in which you can use a **Wizard** to ask user questions. Of course RKD's tasks are executed in a programming language, so you can
+actually do everything you want there using Bash and Python.
+
+Below is an example :code:`.rkd/makefile.yaml` file with customized "wizard" that asks user for a domain name, and for the basic auth password.
+Please notice the **to_env=True** - it means, that user input would be written to **.env** file as *AUTH_PASSWORD* variable.
+
+Every **attribute** is exposed into *.j2 templates when those are rendered, giving a possibility to render customized files basing on user input.
+
+.. code:: yaml
+
+    version: org.riotkit.rkd/yaml/v1
+    tasks:
+        :snippet:wizard:
+            arguments:
+                "path":
+                    help: "Path to the snippet"
+            steps: |
+                #!python
+                from rkd.inputoutput import Wizard
+
+                Wizard(this)\
+                    .ask('Domain name', attribute='domain_name', regexp='([A-Za-z0-9_]+)', default='localhost')\
+                    .ask('Basic auth password', attribute='AUTH_PASSWORD', to_env=True)\
+                    .finish()
+
+Makefile - advanced usage: Overriding files copying procedure
+-------------------------------------------------------------
+
+Beside the *:snippet:wizard* task RKD-COOP allows to customize the process of installing the snippet. The default behavior
+is to copy all files from **"files"** directory recursively, and render *.j2 templates on-the-fly. That's a pretty universal behavior.
+
+:code:`:snippet:install` can be implemented to override default behavior with eg. file downloading and unpacking, git cloning or other desired behavior.
+
+.. code:: yaml
+
+    version: org.riotkit.rkd/yaml/v1
+    tasks:
+        #
+        # Here could be defined also other tasks, including :snippet:wizard
+        # You can call other tasks in Bash with: %RKD% :my-task-name
+        # In Python: this.rkd([':my-task-name', '--some-argument=some-value'])
+        #
+
+        :snippet:install:
+            arguments:
+                "path":
+                    help: "Path to the snippet"
+            steps: |
+                #!bash
+                wget https://github.com/riotkit-org/tunman/archive/master.zip
+                unzip master.zip
+                rm master.zip
+                # ...
 
 Simplicity over complexity
 --------------------------
 
 Snippet cooperative is not an application store, or a package manager.
-It is intended to be a simple snippet store, but we do not exclude implementation of "store-like" mechanism in the future.
+It is intended to be a simple snippet store, but we do not exclude implementation of "store-like" mechanism in the future if there will be a lot of requests for such feature.
+
+From authors
+------------
+
+We are grassroot activists for social change, so we created this software while we were helping those fantastic initiatives:
+
+- RiotKit (https://riotkit.org)
+- International Workers Association (https://iwa-ait.org)
+- Anarchistyczne FAQ (http://anarchizm.info) a translation of Anarchist FAQ (https://theanarchistlibrary.org/library/the-anarchist-faq-editorial-collective-an-anarchist-faq)
+- Federacja Anarchistyczna (http://federacja-anarchistyczna.pl)
+- Związek Syndykalistów Polski (https://zsp.net.pl) (Polish section of IWA-AIT)
+- Komitet Obrony Praw Lokatorów (https://lokatorzy.info.pl)
+- Solidarity Federation (https://solfed.org.uk)
+- Priama Akcia (https://priamaakcia.sk)
+
+Special thanks to `Working Class History <https://twitter.com/wrkclasshistory>`_ for very powerful samples that we could use in our unit tests.
