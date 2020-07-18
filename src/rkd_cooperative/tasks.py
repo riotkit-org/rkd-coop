@@ -48,7 +48,7 @@ class CooperativeSyncTask(BaseCooperativeTask):
     """Synchronize repositories"""
 
     def configure_argparse(self, parser: ArgumentParser):
-        parser.add_argument('--coop-repositories', default='', help='List of urls to repositories, comma separated')
+        parser.add_argument('--coop-repositories', help='List of urls to repositories, comma separated')
 
     def get_name(self) -> str:
         return ':sync'
@@ -96,7 +96,15 @@ class CooperativeSyncTask(BaseCooperativeTask):
         if git_url.startswith('http'):
             return urlparse(git_url).path[1:]
 
-        name = git_url[5:].split(':')[1]
+        if not git_url:
+            return ''
+
+        separated = git_url[5:].split(':')
+
+        if len(separated) < 2:
+            raise Exception('Malformed GIT url "%s" in repositories list' % git_url)
+
+        name = separated[1]
         parts = name.split('/')
 
         # support for custom GIT-SSH port (example: ssh://git@github.com:5000/riotkit-org/riotkit-do.git)
