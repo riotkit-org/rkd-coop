@@ -142,7 +142,7 @@ class CooperativeInstallTask(BaseCooperativeTask):
             if os.path.isfile('.rkd/tmp-wizard.json'):
                 os.unlink('.rkd/tmp-wizard.json')
 
-            os.putenv('rkd_path', rkd_path)
+            os.putenv('RKD_PATH', rkd_path)
 
         return True
 
