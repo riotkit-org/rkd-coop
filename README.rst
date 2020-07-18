@@ -19,6 +19,8 @@ Uses popular and easy JINJA2 templating to render configuration files based on a
     rkd-coop :cooperative:install harbor/redis
 
 
+.. image:: ./docs/demo.gif
+
 How it works?
 -------------
 
