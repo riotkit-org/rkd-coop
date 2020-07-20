@@ -22,8 +22,8 @@ class CooperativeSyncTaskTest(BaseTestCase):
             mock_task(task=task, io=io)
 
             args = {
-                '--repositories': 'https://github.com/riotkit-org/riotkit-harbor-snippet-cooperative' +
-                                  '@@791f617e664f3d0d50d485b88abe38b87cbb2525'
+                '--coop-repositories': 'https://github.com/riotkit-org/riotkit-harbor-snippet-cooperative' +
+                                       '@@791f617e664f3d0d50d485b88abe38b87cbb2525'
             }
 
             with r_io.capture_descriptors(enable_standard_out=True, stream=str_io):
@@ -63,13 +63,14 @@ class CooperativeSyncTaskTest(BaseTestCase):
             mock_task(task=task, io=io)
 
             args = {
-                '--repositories': 'https://github.com/riotkit-org/riotkit-harbor-snippet-cooperative' +
-                                  '@@invalid-ref-name,' +
-                                  'https://github.com/riotkit-org/empty'
+                '--coop-repositories': 'https://github.com/riotkit-org/riotkit-harbor-snippet-cooperative' +
+                                       '@@invalid-ref-name,' +
+                                       'https://github.com/riotkit-org/empty'
             }
 
             result = task.execute(mock_execution_context(task, args=args))
-            self.assertTrue(os.path.isdir('.rkd/cooperative/riotkit-org/empty'), msg='Expected ')
+            self.assertTrue(os.path.isdir('.rkd/cooperative/riotkit-org/empty'),
+                            msg='Expected empty directory to be cloned for testing')
             self.assertIn('Failed to synchronize repository ' +
                           '"https://github.com/riotkit-org/riotkit-harbor-snippet-cooperative"', io.get_value())
             self.assertFalse(result)

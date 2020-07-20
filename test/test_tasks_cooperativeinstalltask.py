@@ -67,19 +67,25 @@ class CooperativeInstallTaskTest(BaseTestCase):
             self.assertIn('.rkd/cooperative/repository-copy/snippets/nginx', io.get_value())
 
     def test_extract_category_and_pkg_names_returns_package_name_and_category_name_when_those_are_given(self):
-        category_name, pkg_name = CooperativeInstallTask.extract_category_and_pkg_names('harbor/redis')
+        task = CooperativeInstallTask()
+        task._io = BufferedSystemIO()
+        category_name, pkg_name = task.extract_category_and_pkg_names('harbor/redis')
 
         self.assertEqual('harbor', category_name)
         self.assertEqual('redis', pkg_name)
 
     def test_extract_category_and_pkg_names_returns_only_package_name_when_category_is_not_present(self):
-        category_name, pkg_name = CooperativeInstallTask.extract_category_and_pkg_names('redis')
+        task = CooperativeInstallTask()
+        task._io = BufferedSystemIO()
+        category_name, pkg_name = task.extract_category_and_pkg_names('redis')
 
         self.assertEqual('', category_name)
         self.assertEqual('redis', pkg_name)
 
     def test_extract_category_and_pkg_names_returns_multiple_directories_in_pkg_name(self):
-        category_name, pkg_name = CooperativeInstallTask.extract_category_and_pkg_names('harbor/db/kv/redis')
+        task = CooperativeInstallTask()
+        task._io = BufferedSystemIO()
+        category_name, pkg_name = task.extract_category_and_pkg_names('harbor/db/kv/redis')
 
         self.assertEqual('harbor', category_name)
         self.assertEqual('db/kv/redis', pkg_name)
