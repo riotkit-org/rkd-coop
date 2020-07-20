@@ -64,7 +64,7 @@ actually do everything you want there using Bash and Python.
 Below is an example :code:`.rkd/makefile.yaml` file with customized "wizard" that asks user for a domain name, and for the basic auth password.
 Please notice the **to_env=True** - it means, that user input would be written to **.env** file as *AUTH_PASSWORD* variable.
 
-Every **attribute** is exposed into *.j2 templates when those are rendered, giving a possibility to render customized files basing on user input.
+Every **attribute** is exposed into \*.j2 templates when those are rendered, giving a possibility to render customized files basing on user input.
 
 .. code:: yaml
 
@@ -87,7 +87,7 @@ Makefile - advanced usage: Overriding files copying procedure
 -------------------------------------------------------------
 
 Beside the *:snippet:wizard* task RKD-COOP allows to customize the process of installing the snippet. The default behavior
-is to copy all files from **"files"** directory recursively, and render *.j2 templates on-the-fly. That's a pretty universal behavior.
+is to copy all files from **"files"** directory recursively, and render \*.j2 templates on-the-fly. That's a pretty universal behavior.
 
 :code:`:snippet:install` can be implemented to override default behavior with eg. file downloading and unpacking, git cloning or other desired behavior.
 
