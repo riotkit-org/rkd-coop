@@ -32,4 +32,4 @@ jobs:
 
         - stage: Release
           python: 3.6
-          script: rkd :release
+          script: RKD_COMPAT_SUBPROCESS=true rkd :release

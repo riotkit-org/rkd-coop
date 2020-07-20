@@ -157,11 +157,12 @@ class CooperativeInstallTask(BaseCooperativeTask):
 
         return True
 
-    @staticmethod
-    def extract_category_and_pkg_names(name: str) -> Tuple[str, str]:
+    def extract_category_and_pkg_names(self, name: str) -> Tuple[str, str]:
         parts = name.split('/')
         category_name = parts[0] if len(parts) >= 2 else ''
         pkg_name = '/'.join(parts[1:]) if len(parts) >= 2 else name
+
+        self.io().debug('category_name=%s, pkg_name=%s' % (category_name, pkg_name))
 
         return category_name, pkg_name
 
@@ -188,10 +189,12 @@ class CooperativeInstallTask(BaseCooperativeTask):
 
         return found_path
 
-    @staticmethod
-    def list_snippets(category_name: str):
+    def list_snippets(self, category_name: str):
         inside_path = category_name + '/' if category_name else ''
-        dirs = glob('.rkd/cooperative/**/snippets/' + inside_path + '**/files', recursive=True)
+        glob_path = '.rkd/cooperative/**/snippets/' + inside_path + '**/snippet.json'
+
+        self.io().debug('glob_path=%s' % glob_path)
+        dirs = glob(glob_path, recursive=True)
 
         return list(set(map(lambda name: os.path.dirname(name), dirs)))
 
@@ -234,6 +237,7 @@ class CooperativeSnippetInstallTask(BaseCooperativeTask):
             '--source="%s"' % ctx.get_arg('path') + '/files/',
             '--target="./"',
             '--pattern="(.*)"',
-            '--copy-not-matching-files'
+            '--copy-not-matching-files',
+            '--template-filenames'
         ])
         return True
