@@ -74,3 +74,5 @@ class CooperativeSyncTaskTest(BaseTestCase):
             self.assertIn('Failed to synchronize repository ' +
                           '"https://github.com/riotkit-org/riotkit-harbor-snippet-cooperative"', io.get_value())
             self.assertFalse(result)
+
+    # todo: Cover case - cloning a local git repository from directory to directory
