@@ -99,6 +99,9 @@ class CooperativeSyncTask(BaseCooperativeTask):
         if not git_url:
             return ''
 
+        if os.path.isdir(git_url):
+            return os.path.basename(git_url)
+
         separated = git_url[5:].split(':')
 
         if len(separated) < 2:
