@@ -23,6 +23,17 @@ Uses popular and easy JINJA2 templating to render configuration files based on a
 
 .. image:: ./docs/demo.gif
 
+Installing
+----------
+
+```bash
+# with pipenv
+pipenv install rkd-cooperative
+
+# using regular PIP
+pip install rkd-cooperative
+```
+
 How it works?
 -------------
 
