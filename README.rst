@@ -54,6 +54,7 @@ Repository and snippets structure
     # can include subdirectories of any depth
     snippets/web-servers/nginx/files/nginx.conf.j2
 
+
 **Example snippet.json file**
 
 .. code:: json
@@ -63,6 +64,7 @@ Repository and snippets structure
         "maintainers": ["Andrew Johnson <https://github.com/blackandred>"],
         "version": "1.0"
     }
+
 
 Makefile - creating interactive wizards
 ---------------------------------------
@@ -121,6 +123,7 @@ is to copy all files from **"files"** directory recursively, and render \*.j2 te
                 unzip master.zip
                 rm master.zip
                 # ...
+
 
 Join it into your project or custom RKD distribution
 ----------------------------------------------------
