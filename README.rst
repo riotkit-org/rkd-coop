@@ -16,7 +16,7 @@ Uses popular and easy JINJA2 templating to render configuration files based on a
 
     pip install rkd-snippet-cooperative
 
-    export REPOSITORIES=https://github.com/riotkit-org/riotkit-harbor-snippet-cooperative
+    export COOP_REPOSITORIES=https://github.com/riotkit-org/riotkit-harbor-snippet-cooperative
     rkd-coop :cooperative:sync          # similar to apt update, huh?
     rkd-coop :cooperative:install harbor/redis
 
