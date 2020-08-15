@@ -22,18 +22,18 @@ class CooperativeSyncTaskTest(BaseTestCase):
             mock_task(task=task, io=io)
 
             args = {
-                '--coop-repositories': 'https://github.com/riotkit-org/riotkit-harbor-snippet-cooperative' +
+                '--repositories': 'https://github.com/riotkit-org/riotkit-harbor-snippet-cooperative' +
                                        '@@791f617e664f3d0d50d485b88abe38b87cbb2525'
             }
 
             with r_io.capture_descriptors(enable_standard_out=True, stream=str_io):
                 # first time, it should be `git clone`
                 task.execute(mock_execution_context(task, args=args,
-                                                    defined_args={'--coop-repositories': {'default': ''}}))
+                                                    defined_args={'--repositories': {'default': ''}}))
 
                 # second time it should be a `git checkout && git pull`
                 task.execute(mock_execution_context(task, args=args,
-                                                    defined_args={'--coop-repositories': {'default': ''}}))
+                                                    defined_args={'--repositories': {'default': ''}}))
 
             content = str_io.getvalue()
             self.assertIn("Cloning into '.rkd/cooperative/riotkit-org/riotkit-harbor-snippet-cooperative'", content,
@@ -65,7 +65,7 @@ class CooperativeSyncTaskTest(BaseTestCase):
             mock_task(task=task, io=io)
 
             args = {
-                '--coop-repositories': 'https://github.com/riotkit-org/riotkit-harbor-snippet-cooperative' +
+                '--repositories': 'https://github.com/riotkit-org/riotkit-harbor-snippet-cooperative' +
                                        '@@invalid-ref-name,' +
                                        'https://github.com/riotkit-org/empty'
             }
