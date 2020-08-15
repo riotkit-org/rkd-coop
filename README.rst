@@ -45,7 +45,7 @@ Repository and snippets structure
 
     # snippet main directory, maintained by a maintainers listed in a separate file
     snippets/web-servers/nginx
-    snippets/web-servers/nginx/MAINTAINERS.md
+    snippets/web-servers/nginx/snippet.json  # this file is mandatory for RKD-COOP to find the snippet at all
 
     # RKD's makefile defines how to install the snippet (eg. interactive installation wizards)
     snippets/web-servers/nginx/.rkd/makefile.yaml
@@ -53,6 +53,16 @@ Repository and snippets structure
     # files to copy to "./" (current workspace), all *.j2 files are rendered and .j2 extensions are cut off
     # can include subdirectories of any depth
     snippets/web-servers/nginx/files/nginx.conf.j2
+
+**Example snippet.json file**
+
+.. code:: json
+
+    {
+        "description": "Simplest Redis Server configuration with persistent volume",
+        "maintainers": ["Andrew Johnson <https://github.com/blackandred>"],
+        "version": "1.0"
+    }
 
 Makefile - creating interactive wizards
 ---------------------------------------
