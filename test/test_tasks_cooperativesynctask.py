@@ -28,10 +28,12 @@ class CooperativeSyncTaskTest(BaseTestCase):
 
             with r_io.capture_descriptors(enable_standard_out=True, stream=str_io):
                 # first time, it should be `git clone`
-                task.execute(mock_execution_context(task, args=args))
+                task.execute(mock_execution_context(task, args=args,
+                                                    defined_args={'--coop-repositories': {'default': ''}}))
 
                 # second time it should be a `git checkout && git pull`
-                task.execute(mock_execution_context(task, args=args))
+                task.execute(mock_execution_context(task, args=args,
+                                                    defined_args={'--coop-repositories': {'default': ''}}))
 
             content = str_io.getvalue()
             self.assertIn("Cloning into '.rkd/cooperative/riotkit-org/riotkit-harbor-snippet-cooperative'", content,
@@ -69,6 +71,7 @@ class CooperativeSyncTaskTest(BaseTestCase):
             }
 
             result = task.execute(mock_execution_context(task, args=args))
+
             self.assertTrue(os.path.isdir('.rkd/cooperative/riotkit-org/empty'),
                             msg='Expected empty directory to be cloned for testing')
             self.assertIn('Failed to synchronize repository ' +

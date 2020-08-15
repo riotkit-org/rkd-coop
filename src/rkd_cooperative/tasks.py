@@ -5,10 +5,11 @@ from argparse import ArgumentParser
 from typing import Dict
 from typing import Tuple
 from urllib.parse import urlparse
-from rkd.contract import ExecutionContext
+from rkd.api.contract import ExecutionContext
+from rkd.api.inputoutput import Wizard
+from rkd.api.contract import TaskInterface
+from rkd.api.contract import ArgumentEnv
 from rkd.exception import MissingInputException
-from rkd.inputoutput import Wizard
-from rkd.contract import TaskInterface
 from .formatting import core_snippet_tasks_formatting
 
 HARBOR_PATH = os.path.dirname(os.path.realpath(__file__)) + '/..'
@@ -19,19 +20,18 @@ class BaseCooperativeTask(TaskInterface):
     def format_task_name(self, name) -> str:
         return core_snippet_tasks_formatting(name)
 
-    def get_declared_envs(self) -> Dict[str, str]:
+    def get_declared_envs(self) -> Dict[str, ArgumentEnv]:
         envs = super(BaseCooperativeTask, self).get_declared_envs()
-        envs['COOP_REPOSITORIES'] = ''
+        envs['COOP_REPOSITORIES'] = ArgumentEnv(name='COOP_REPOSITORIES', switch='--repositories', default='')
 
         return envs
 
     def get_group_name(self) -> str:
         return ':cooperative'
 
-    @staticmethod
-    def get_repositories_list(ctx: ExecutionContext) -> Dict[str, str]:
+    def get_repositories_list(self, ctx: ExecutionContext) -> Dict[str, str]:
         try:
-            repos = ctx.get_arg_or_env('--coop-repositories').split(',')
+            repos = ctx.get_arg_or_env('--repositories').split(',')
             repos_with_branch = {}
 
             for repo in repos:
@@ -41,6 +41,7 @@ class BaseCooperativeTask(TaskInterface):
             return repos_with_branch
 
         except MissingInputException:
+            self.io().warn('No repositories specified')
             return {}
 
 
@@ -48,7 +49,7 @@ class CooperativeSyncTask(BaseCooperativeTask):
     """Synchronize repositories"""
 
     def configure_argparse(self, parser: ArgumentParser):
-        parser.add_argument('--coop-repositories', help='List of urls to repositories, comma separated')
+        parser.add_argument('--repositories', help='List of urls to repositories, comma separated')
 
     def get_name(self) -> str:
         return ':sync'

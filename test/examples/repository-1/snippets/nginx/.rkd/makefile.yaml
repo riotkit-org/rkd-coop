@@ -10,3 +10,5 @@ tasks:
             Wizard(this)\
                 .ask('Domain name', attribute='DOMAIN', regexp='([A-Za-z0-9_.]+)', default='localhost', to_env=True)\
                 .finish()
+
+            return True
