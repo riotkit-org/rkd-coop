@@ -136,29 +136,6 @@ is to copy all files from **"files"** directory recursively, and render \*.j2 te
                 # ...
 
 
-Join it into your project or custom RKD distribution
-----------------------------------------------------
-
-RKD-COOP is a set of RKD tasks you can import into any project. Additionally you can define :code:`COOP_REPOSITORIES` environment variable by default
-so your project would use fixed repositories by default when calling sync task.
-
-Simply set :code:`COOP_REPOSITORIES` in makefile.yaml, makefile.py or in .env file.
-
-**For makefile.py (RKD Makefile.py syntax)**
-
-.. code:: python
-
-    from rkd_cooperative import imports as CoopImports
-
-    IMPORTS += CoopImports()
-
-**For makefile.yaml (RKD Makefile YAML syntax)**
-
-.. code:: yaml
-
-    imports:
-        - rkd_cooperative
-
 Simplicity over complexity
 --------------------------
 
