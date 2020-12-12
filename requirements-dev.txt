@@ -1,1 +1,1 @@
-rkd_python >=2.1.0, <2.2
+rkd_python>=2.3.4
