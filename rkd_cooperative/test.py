@@ -1,10 +1,10 @@
 import os
-import unittest
 from copy import deepcopy
 from abc import ABC
+from rkd.api.testing import BasicTestingCase
 
 
-class BaseTestCase(unittest.TestCase, ABC):
+class BaseTestCase(BasicTestingCase, ABC):
     _original_cwd: str
     _original_environ: dict
 

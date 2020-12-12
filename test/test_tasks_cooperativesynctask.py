@@ -1,7 +1,6 @@
 import os
 from tempfile import TemporaryDirectory
 from io import StringIO
-from rkd.test import mock_task, mock_execution_context
 from rkd.inputoutput import BufferedSystemIO
 from rkd.inputoutput import IO
 from rkd_cooperative import CooperativeSyncTask
@@ -19,7 +18,7 @@ class CooperativeSyncTaskTest(BaseTestCase):
             str_io = StringIO()
 
             task: CooperativeSyncTask = CooperativeSyncTask()
-            mock_task(task=task, io=io)
+            self.satisfy_task_dependencies(task=task, io=io)
 
             args = {
                 '--repositories': 'https://github.com/riotkit-org/riotkit-harbor-snippet-cooperative' +
@@ -28,12 +27,12 @@ class CooperativeSyncTaskTest(BaseTestCase):
 
             with r_io.capture_descriptors(enable_standard_out=True, stream=str_io):
                 # first time, it should be `git clone`
-                task.execute(mock_execution_context(task, args=args,
-                                                    defined_args={'--repositories': {'default': ''}}))
+                task.execute(self.mock_execution_context(task, args=args,
+                                                         defined_args={'--repositories': {'default': ''}}))
 
                 # second time it should be a `git checkout && git pull`
-                task.execute(mock_execution_context(task, args=args,
-                                                    defined_args={'--repositories': {'default': ''}}))
+                task.execute(self.mock_execution_context(task, args=args,
+                                                         defined_args={'--repositories': {'default': ''}}))
 
             content = str_io.getvalue()
             self.assertIn("Cloning into '.rkd/cooperative/riotkit-org/riotkit-harbor-snippet-cooperative'", content,
@@ -62,7 +61,7 @@ class CooperativeSyncTaskTest(BaseTestCase):
 
             io = BufferedSystemIO()
             task: CooperativeSyncTask = CooperativeSyncTask()
-            mock_task(task=task, io=io)
+            self.satisfy_task_dependencies(task=task, io=io)
 
             args = {
                 '--repositories': 'https://github.com/riotkit-org/riotkit-harbor-snippet-cooperative' +
@@ -70,7 +69,7 @@ class CooperativeSyncTaskTest(BaseTestCase):
                                        'https://github.com/riotkit-org/empty'
             }
 
-            result = task.execute(mock_execution_context(task, args=args))
+            result = task.execute(self.mock_execution_context(task, args=args))
 
             self.assertTrue(os.path.isdir('.rkd/cooperative/riotkit-org/empty'),
                             msg='Expected empty directory to be cloned for testing')
